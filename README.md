@@ -1,0 +1,1 @@
+# farsky-spevnik
