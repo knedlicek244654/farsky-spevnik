@@ -47,7 +47,7 @@ V ovládači (`/tablet`) je tretí, úzky panel **„Fronta na omšu“**. Piesn
 ### Administrácia (`/admin`)
 
 - **Piesne** – pridávanie, úprava a mazanie piesní v oboch zbierkach cez formulár (číslo, názov, sloha po slohe) – netreba ručne upravovať JSON súbory.
-- **Vzhľad TV** – 5 farebných predvolieb (Slávnostná, Cezročné obdobie, Pôst a Advent, Vianoce, Jednoduchá čiernobiela). Zmena sa prejaví na TV okamžite, bez obnovenia stránky.
+- **Vzhľad TV** – 7 farebných predvolieb (Slávnostná, Cezročné obdobie, Pôst a Advent, Mučenícka, Klasická, Jednoduchá čiernobiela, Invertovaná čiernobiela). Zmena sa prejaví na TV okamžite, bez obnovenia stránky.
 
 Zmeny z administrácie sa ukladajú priamo do `data/jks.json`, `data/zalmy.json` a `data/theme.json`.
 
