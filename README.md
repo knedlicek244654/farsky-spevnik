@@ -1,7 +1,6 @@
-# Farský spevník – ovládač a TV zobrazenie
+# Farský spevník – ovládač, TV zobrazenie a administrácia
 
 Jednoduchá appka bez závislostí (čistý Node.js). Beží na `localhost:3800`.
-Obsahuje dve zbierky: **JKS** a **Žalmy**, a **frontu piesní na omšu**.
 
 ## Štruktúra
 
@@ -12,77 +11,63 @@ farsky-spevnik/
 ├── data/
 │   ├── jks.json         # zbierka JKS
 │   ├── zalmy.json       # zbierka žalmov
-│   └── queue.json       # aktuálna fronta na omšu (vytvorí sa automaticky)
+│   ├── queue.json       # aktuálna fronta na omšu (vytvorí sa automaticky)
+│   └── theme.json       # zvolená farebná predvoľba (vytvorí sa automaticky)
 └── public/
     ├── tablet.html       # ovládač (otvára sa na tablete)
-    └── tv.html           # zobrazenie (otvára sa na TV)
+    ├── tv.html           # zobrazenie (otvára sa na TV)
+    └── admin.html        # administrácia (pridávanie piesní, farby)
 ```
 
 ## Spustenie
 
-1. Rozbaľ priečinok `farsky-spevnik` na počítač, ktorý bude pripojený k TV.
-2. V termináli v tomto priečinku spusti:
-   ```
-   node server.js
-   ```
-3. Zobrazí sa:
-   ```
-   Farský spevník beží na http://localhost:3800
-   ```
+```
+node server.js
+```
+
+Zobrazí sa:
+```
+Farský spevník beží na http://localhost:3800
+  Ovládač (tablet): http://localhost:3800/tablet
+  Zobrazenie (TV):  http://localhost:3800/tv
+```
+
+Administrácia je na `http://localhost:3800/admin`.
 
 ## Použitie
 
-- **Na TV**: otvor `http://localhost:3800/tv`, daj na celú obrazovku (F11). Zobrazuje sa ako biela stránka spevníka.
-- **Na tablete**: v tej istej WiFi sieti otvor `http://<IP počítača>:3800/tablet` (napr. `http://192.168.1.20:3800/tablet`). Lokálnu IP zistíš príkazom `ipconfig` (Windows) alebo `ifconfig` / `ip a` (Mac/Linux).
+- **TV**: `http://localhost:3800/tv`, na celú obrazovku (F11).
+- **Tablet**: v tej istej WiFi sieti `http://<IP počítača>:3800/tablet`. Lokálnu IP zistíš príkazom `ipconfig` (Windows) alebo `ifconfig` / `ip a` (Mac/Linux).
+- **Administrácia**: `http://localhost:3800/admin` – z počítača alebo pokojne aj z tabletu/telefónu v tej istej sieti.
 
-### Príprava pred omšou – fronta
+### Fronta na omšu
 
-Vpravo je tretí, úzky panel **„Fronta na omšu“**. V zozname piesní (prostredný panel) má každá pieseň tlačidlo **„+“** – tým ju pridáš do fronty v poradí, v akom ju chceš hrať. Piesne môžeš pridávať z oboch zbierok (JKS aj Žalmy) do jednej spoločnej fronty.
+V ovládači (`/tablet`) je tretí, úzky panel **„Fronta na omšu“**. Piesne pridávaš tlačidlom **„+“** priamo v zozname (funguje naprieč zbierkami). Vo fronte vieš poradie meniť šípkami, mazať krížikom, alebo len klikať položky pre okamžité zobrazenie na TV. Fronta sa ukladá na serveri (`data/queue.json`), takže prežije reštart aj obnovenie stránky.
 
-Vo fronte môžeš:
-- kliknutím na položku ju **rovno pustiť na TV**,
-- šípkami **↑ / ↓** zmeniť poradie,
-- krížikom **✕** ju odstrániť,
-- tlačidlami **‹ / ›** hore prejsť na predchádzajúcu/nasledujúcu pieseň vo fronte (počas omše tak stačí len klikať ›),
-- tlačidlom **„Vymazať frontu“** ju celú vynulovať.
+### Administrácia (`/admin`)
 
-Fronta sa ukladá na server (`data/queue.json`), takže ostáva zachovaná aj pri obnovení stránky alebo reštarte servera – pokojne si ju priprav deň vopred.
+- **Piesne** – pridávanie, úprava a mazanie piesní v oboch zbierkach cez formulár (číslo, názov, sloha po slohe) – netreba ručne upravovať JSON súbory.
+- **Vzhľad TV** – 5 farebných predvolieb (Slávnostná, Cezročné obdobie, Pôst a Advent, Vianoce, Jednoduchá čiernobiela). Zmena sa prejaví na TV okamžite, bez obnovenia stránky.
 
-### Priame zobrazenie mimo fronty
-
-Vľavo je klávesnica – zadaním čísla a tlačidlom **„Zobraziť na TV“** (alebo klávesou OK) pošleš pieseň na TV okamžite, bez pridania do fronty. Hodí sa na spontánnu/nečakanú pieseň. Tlačidlom **„Skryť z TV“** sa TV vráti na pokojnú čakaciu obrazovku.
-
-## Pridanie skutočných piesní
-
-Piesne sú v `data/jks.json` a `data/zalmy.json`, formát:
-
-```json
-"125": {
-  "title": "Názov piesne",
-  "verses": [
-    "Prvá sloha,\nriadok po riadku.",
-    "Druhá sloha."
-  ]
-}
-```
-
-Kľúč (`"125"`) je číslo piesne/žalmu. Po úprave stačí obnoviť `/tablet` – server netreba reštartovať.
-
-Momentálne sú tam len ukážkové položky s placeholder textom – nahraď ich reálnymi. Ak zbierka (napr. JKS) podlieha autorským právam, over si licenciu na verejné zobrazovanie textu (v mnohých farnostiach sa na to používa CCLI alebo podobná licencia).
+Zmeny z administrácie sa ukladajú priamo do `data/jks.json`, `data/zalmy.json` a `data/theme.json`.
 
 ## Pridanie ďalšej zbierky
 
-1. Vytvor `data/nazov.json` v rovnakom formáte.
+1. Vytvor `data/nazov.json` v rovnakom formáte ako `jks.json`.
 2. V `server.js` pridaj riadok do poľa `COLLECTIONS`:
    ```js
    { id: 'detsky', name: 'Detský spevník', file: 'detsky.json' },
    ```
-3. Reštartuj server – nová záložka sa objaví automaticky na ovládači.
+3. Reštartuj server – nová záložka sa objaví automaticky na ovládači aj v administrácii.
+
+## Autorské práva
+
+Piesne pridávané cez administráciu (najmä z JKS) môžu podliehať autorským právam. Over si, či máte licenciu na verejné zobrazovanie textu (v mnohých farnostiach na to slúži CCLI alebo podobná licencia).
 
 ## Ako to funguje
 
-- `server.js` – server, ktorý servíruje stránky, API pre piesne a frontu (bez npm balíčkov)
+- `server.js` – server: stránky, API pre piesne, frontu, motívy aj administráciu (bez npm balíčkov)
 - `public/tablet.html` – ovládací panel: záložky zbierok, klávesnica, vyhľadávanie, fronta
-- `public/tv.html` – zobrazenie pre TV, aktualizuje sa okamžite cez server-sent events (SSE)
-- `data/*.json` – databázy piesní jednotlivých zbierok
-- `data/queue.json` – aktuálna fronta na omšu (perzistentná)
+- `public/tv.html` – zobrazenie pre TV, aktualizuje sa okamžite cez server-sent events (SSE), aplikuje aj zvolený farebný motív
+- `public/admin.html` – správa piesní a farebných predvolieb
+- `data/*.json` – databázy piesní, fronta a zvolený motív
