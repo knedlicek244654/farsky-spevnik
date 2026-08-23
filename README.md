@@ -1,4 +1,4 @@
-# Farský spevník
+# Farský spevník - webová edícia
 
 Appka na zobrazovanie textov piesní na TV počas omše, ovládaná z tabletu. Napísaná v čistom Node.js – **žiadne npm balíčky, žiadna inštalácia**, stačí mať nainštalovaný Node.js.
 
