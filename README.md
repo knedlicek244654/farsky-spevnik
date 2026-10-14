@@ -1,4 +1,4 @@
-# Farský spevník - webová edícia
+# Farský spevník
 
 Appka na zobrazovanie textov piesní na TV počas omše, ovládaná z tabletu. Napísaná v čistom Node.js – **žiadne npm balíčky, žiadna inštalácia**, stačí mať nainštalovaný Node.js.
 
@@ -12,11 +12,13 @@ farsky-spevnik/
 │   ├── jks.json         # zbierka JKS
 │   ├── zalmy.json       # zbierka žalmov
 │   ├── detsky.json      # detský spevník
+│   ├── mladeznicky-spevnik.json # mládežnícky spevník
 │   ├── collections.json # zoznam všetkých zbierok vrátane novo pridaných (vytvorí sa automaticky)
 │   ├── queue.json       # aktuálna fronta na omšu (vytvorí sa automaticky)
 │   ├── favorites.json   # obľúbené piesne pre rýchly prístup na ovládači (vytvorí sa automaticky)
 │   ├── theme.json       # zvolená farebná predvoľba, automatický režim a obdobia (vytvorí sa automaticky)
 │   ├── idle-images.json # zoznam obrázkov pre čakaciu obrazovku (vytvorí sa automaticky)
+│   ├── design.json      # zvolený dizajn – nový / pôvodný (vytvorí sa automaticky)
 │   ├── auth.json        # zahashované heslo do administrácie (vytvorí sa automaticky)
 │   └── history.json     # história hraných piesní (vytvorí sa automaticky)
 └── public/
@@ -25,7 +27,10 @@ farsky-spevnik/
     ├── tv.html           # zobrazenie (otvára sa na TV)
     ├── admin.html        # administrácia (piesne, farby, obrázky, heslo, história) – vyžaduje prihlásenie
     ├── admin-login.html  # vlastná prihlasovacia stránka do administrácie
+    ├── glass.css         # spoločný „liquid glass“ dizajn všetkých stránok
+    ├── glass.js          # spoločné skripty nového dizajnu
     └── idle-images/      # nahrané obrázky pre čakaciu obrazovku (vytvorí sa automaticky)
+zaloha_povodne_stranky/   # pôvodný vzhľad stránok (zapína sa v administrácii prepínačom „Starý dizajn“)
 ```
 
 ## Spustenie
@@ -55,8 +60,9 @@ Na tablete/TV zisti lokálnu IP počítača príkazom `ipconfig` (Windows) alebo
 
 ## Ovládač (`/tablet`)
 
-- Hore záložky na prepínanie medzi zbierkami (JKS, Žalmy, Detský spevník, ...).
-- Vľavo klávesnica – zadaním čísla (voliteľne s čiarkou a číslom slohy, napr. `125,3`) a tlačidlom **„Zobraziť na TV"** (alebo klávesou Enter) pošleš pieseň na TV **okamžite**, mimo fronty. Hodí sa na spontánnu pieseň. Pod tým tlačidlá **„◀ Späť"** / **„Ďalej ▶"** posúvajú TV medzi jednotlivými slohami práve zobrazenej piesne (TV vždy ukazuje len jednu slohu naraz), s ukazovateľom „2 / 4". Pod tým tlačidlá **„A− Menšie"** / **„⟲"** / **„A+ Väčšie"** ručne upravia veľkosť textu na TV nad rámec toho, čo by zvolila automatika – hodí sa, ak by chcel niekto väčšie alebo menšie písmo než automat vyberie; „⟲" vráti späť na čistú automatiku. TV pritom vždy stráži, aby sa text nikdy neorezal mimo obrazovky – ak by pri „A+ Väčšie" text prestal byť celý viditeľný, mierne ho sám dozmenší, aby zostal celý čitateľný. Nastavenie sa resetuje pri každej novej piesni. Tlačidlom **„Skryť z TV"** sa TV vráti na čakaciu obrazovku s nahratým obrázkom (ak nejaký nahraný je).
+- Hore záložky na prepínanie medzi zbierkami (JKS, Žalmy, Detský spevník, Mládežnícky spevník, ...).
+- Na širokej obrazovke (pomer strán 16:10 a viac, napr. 16:9) majú tlačidlá klávesnice tvar štvorca a ľavý stĺpec sa prispôsobí výške obrazovky, aby boli čo najväčšie. Front je širší a dlhé názvy piesní sa vo fronte zalamujú na dva riadky namiesto skracovania.
+- Vľavo klávesnica – zadaním čísla (voliteľne s čiarkou a číslom slohy, napr. `125,3`) a tlačidlom **„Zobraziť na TV"** (alebo klávesou Enter) pošleš pieseň na TV **okamžite**, mimo fronty. Hodí sa na spontánnu pieseň. Pod tým tlačidlá **„◀ Späť"** / **„Ďalej ▶"** posúvajú TV medzi jednotlivými slohami práve zobrazenej piesne (TV vždy ukazuje len jednu slohu naraz), s ukazovateľom „2 / 4". Tlačidlom **„Náhľad"** (aj ikonou obrazovky pri každej piesni v zozname) si pred odoslaním ukážeš, ako bude pieseň vyzerať na TV – v okne vieš prechádzať po slohách (tlačidlami **Späť / Ďalej** alebo šípkami `←` / `→`), zavrieť ho klávesom `Esc` a pieseň odoslať na TV tlačidlom **„Zobraziť na TV"** (alebo `Enter`). Tlačidlom **„Skryť z TV"** sa TV vráti na čakaciu obrazovku s nahratým obrázkom (ak nejaký nahraný je).
 
 ### Ovládanie klávesnicou / numerickou klávesnicou (numpad)
 
@@ -121,6 +127,10 @@ Po zadaní správneho hesla appka vydá reláciu (cookie), ktorá platí 60 dní
 ### Zmena hesla
 
 Úplne dole na stránke je karta **„Zmena hesla"** (zabudovaná priamo do stránky, žiadne vyskakovacie okno) – zadáš súčasné heslo, nové heslo dvakrát pre kontrolu, a potvrdíš. Heslo sa ukladá zahashované (nie ako čitateľný text) do `data/auth.json`. Po zmene si pri ďalšom prihlásení zadáš už nové heslo.
+
+### Prepínač dizajnu
+
+V hlavičke administrácie je prepínač **„Starý dizajn"**. Aplikácia má nový vzhľad „liquid glass" (priesvitné rozostrené karty) a týmto prepínačom sa dá celá (TV, ovládač, domovská stránka aj administrácia) vrátiť na pôvodný vzhľad zo zálohy `zaloha_povodne_stranky/`. Zmena sa uloží do `data/design.json` a všetky otvorené stránky sa po pár sekundách samy načítajú znova v zvolenom dizajne. Prepnúť dizajn môže len prihlásený správca.
 
 ### Piesne
 
@@ -230,7 +240,7 @@ Vedľa neho je tlačidlo **„⬆ Nahrať zálohu"** – vyberieš predtým stia
 
 ## .gitignore
 
-Repozitár obsahuje `.gitignore`, ktorý vynecháva len súbory, čo si appka sama vytvára/prepisuje za behu (`data/queue.json`, `data/theme.json`, `data/history.json`, `data/auth.json`, `data/collections.json`, `data/favorites.json`, `data/idle-images.json`, a nahraté obrázky v `public/idle-images/`). Skutočné zbierky piesní (`data/jks.json`, `data/zalmy.json`, `data/detsky.json` a prípadné ďalšie, ktoré si ručne pripravíš alebo chceš mať v repozitári natrvalo) ignorované nie sú — commituj ich normálne. Pozor: keďže `data/collections.json` je v `.gitignore`, zbierky pridané cez tlačidlo „+" v administrácii sa pri čerstvom klonovaní repozitára neobjavia, kým ich znova nepridáš (alebo kým si `data/collections.json` necommitneš zámerne, mimo `.gitignore`).
+Repozitár obsahuje `.gitignore`, ktorý vynecháva len súbory, čo si appka sama vytvára/prepisuje za behu (`data/queue.json`, `data/theme.json`, `data/history.json`, `data/design.json`, `data/auth.json`, `data/collections.json`, `data/favorites.json`, `data/idle-images.json`, a nahraté obrázky v `public/idle-images/`). Skutočné zbierky piesní (`data/jks.json`, `data/zalmy.json`, `data/detsky.json` a prípadné ďalšie, ktoré si ručne pripravíš alebo chceš mať v repozitári natrvalo) ignorované nie sú — commituj ich normálne. Pozor: keďže `data/collections.json` je v `.gitignore`, zbierky pridané cez tlačidlo „+" v administrácii sa pri čerstvom klonovaní repozitára neobjavia, kým ich znova nepridáš (alebo kým si `data/collections.json` necommitneš zámerne, mimo `.gitignore`).
 
 ## Vyhľadávanie bez diakritiky
 
@@ -238,9 +248,11 @@ Vyhľadávanie piesní (na ovládači aj v administrácii) a vyhľadávanie obr�
 
 ## Ako to funguje (prehľad súborov)
 
-- `server.js` – server bez akýchkoľvek npm balíčkov: stránky, API pre piesne (aj hromadný import), zbierky (aj premenovanie a zmazanie), frontu, obľúbené piesne, motívy (aj automatický výber podľa dátumu), obrázky (aj podľa dátumu), históriu a prihlásenie do administrácie (s možnosťou zmeny hesla)
+- `server.js` – server bez akýchkoľvek npm balíčkov: stránky, API pre piesne (aj hromadný import), zbierky (aj premenovanie a zmazanie), frontu, obľúbené piesne, motívy (aj automatický výber podľa dátumu), obrázky (aj podľa dátumu), históriu, prepínač dizajnu a prihlásenie do administrácie (s možnosťou zmeny hesla)
+- `public/glass.css`, `public/glass.js` – spoločný vzhľad „liquid glass"
+- `zaloha_povodne_stranky/` – pôvodný vzhľad stránok, zapína sa prepínačom dizajnu v administrácii
 - `public/home.html` – úvodná stránka s výberom Ovládač / TV / Administrácia
-- `public/tablet.html` – ovládací panel: záložky zbierok (vrátane „★ Obľúbené"), klávesnica so zadávaním čísla aj slohy (`125,3`), vyhľadávanie, fronta, navigácia slôh, ručná veľkosť textu, plné ovládanie klávesnicou/numpadom (výber šípkami v zozname aj vo fronte cez Insert, `*`/`+`/`-`)
-- `public/tv.html` – zobrazenie pre TV, live aktualizácia cez server-sent events, automatické aj ručné prispôsobenie textu, farebný motív (aj automaticky podľa dátumu), obrázok čakacej obrazovky podľa dátumu
+- `public/tablet.html` – ovládací panel: záložky zbierok (vrátane „★ Obľúbené"), klávesnica so zadávaním čísla aj slohy (`125,3`), vyhľadávanie, fronta, navigácia slôh, náhľad na TV, plné ovládanie klávesnicou/numpadom (výber šípkami v zozname aj vo fronte cez Insert, `*`/`+`/`-`)
+- `public/tv.html` – zobrazenie pre TV, live aktualizácia cez server-sent events, automatické prispôsobenie textu, farebný motív (aj automaticky podľa dátumu), obrázok čakacej obrazovky podľa dátumu
 - `public/admin.html` – správa zbierok (pridanie, premenovanie, zmazanie) a piesní (aj hromadne), farebných predvolieb (aj automatický režim), obrázkov, zmena hesla a história hraných piesní – chránená heslom
 - `data/*.json` – databázy piesní jednotlivých zbierok, fronta, obľúbené piesne, zvolený motív, heslo (zahashované) a história
